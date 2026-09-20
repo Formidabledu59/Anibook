@@ -1,4 +1,11 @@
-const API_URL = 'http://localhost:3000/api';
+const isLocalStaticServer =
+    window.location.protocol === 'file:' ||
+    window.location.port === '5500' ||
+    window.location.port === '5501';
+
+const API_URL = isLocalStaticServer
+    ? 'http://localhost:3000/api'
+    : '/api';
 
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('characters-grid')) {

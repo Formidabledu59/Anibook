@@ -32,13 +32,15 @@ Une extension VS Code de type serveur statique peut aussi servir le dossier `fro
 
 ## Configuration de l’API
 
-L’adresse est définie au début de [js/main.js](js/main.js) :
+L’adresse est définie au début de [js/main.js](js/main.js). En développement local, le frontend utilise l’API sur le port `3000`; dans Docker, il utilise le chemin relatif `/api` :
 
 ```javascript
-const API_URL = 'http://localhost:3000/api';
+const API_URL = isLocalStaticServer
+    ? 'http://localhost:3000/api'
+    : '/api';
 ```
 
-Si l’API utilise un autre port ou une autre machine, modifier cette constante avant de charger les pages.
+Si l’API utilise un autre port, adapter le bloc de configuration avant de charger les pages.
 
 ## Fonctionnement de l’administration
 
@@ -66,7 +68,7 @@ Les univers et les tags sont administrables séparément. Après une création, 
 ```text
 frontend/
 ├── admin.html       # Gestion des données
-├── characters.html  # Catalogue
+```powershell
 ├── index.html       # Accueil
 ├── quiz.html        # Quiz
 ├── random.html      # Personnage aléatoire
@@ -84,3 +86,5 @@ frontend/
 - **Un univers n’apparaît pas** : le créer dans l’administration puis recharger la page.
 - **Un tag n’apparaît pas dans la recherche** : le créer dans la section Tags puis recharger l’administration.
 - **La page Random ne répond pas** : l’interface appelle `/api/characters/random`, mais cette route n’est pas encore déclarée dans les routes backend actuelles.
+
+En Docker, le frontend utilise automatiquement `/api`. Le fichier [nginx.conf](nginx.conf) transmet cette URL au service `backend`, ce qui rend l’application accessible depuis une autre machine via l’adresse IP du serveur CasaOS.

@@ -1,0 +1,26 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: anibook-backend
+    environment:
+      NODE_ENV: production
+      DATABASE_PATH: /app/data/database.sqlite
+    ports:
+      - "3000:3000"
+    volumes:
+      - anibook-data:/app/data
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: anibook-frontend
+    depends_on:
+      - backend
+    ports:
+      - "8081:80"
+    restart: unless-stopped
+
+volumes:
+  anibook-data:
