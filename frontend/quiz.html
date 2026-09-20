@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anibook — Quiz</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<nav class="navbar">
+    <div class="navbar-container">
+
+        <a href="index.html" class="logo">
+            <span class="logo-icon">A</span>
+            <span class="logo-text">Anibook</span>
+        </a>
+
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">Accueil</a>
+            <a href="characters.html" class="nav-link">Personnages</a>
+            <a href="random.html" class="nav-link">Random</a>
+            <a href="quiz.html" class="nav-link active">Quiz</a>
+            <a href="admin.html" class="nav-link">Admin</a>
+        </div>
+
+        <button class="nav-toggle" type="button">☰</button>
+
+    </div>
+</nav>
+
+<main>
+
+    <section class="page-header">
+
+        <div class="container">
+
+            <h1>
+                Anime
+                <span class="gradient-text">Quiz</span>
+            </h1>
+
+            <p>
+                Teste tes connaissances et découvre ton score.
+            </p>
+
+        </div>
+
+    </section>
+
+    <section class="quiz-container">
+
+        <div class="quiz-card">
+
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                margin-bottom:10px;
+                color:var(--text-secondary);
+                font-size:.85rem;
+            ">
+                <span>Question 3 / 10</span>
+                <span>Score : 2</span>
+            </div>
+
+            <div class="quiz-progress">
+
+                <div
+                    class="quiz-progress-bar"
+                    style="width:30%"
+                ></div>
+
+            </div>
+
+            <h2 class="quiz-question">
+                Quel personnage est connu pour utiliser
+                principalement des techniques de combat ?
+            </h2>
+
+            <div class="quiz-answers">
+
+                <button class="quiz-answer">
+                    Naruto Uzumaki
+                </button>
+
+                <button class="quiz-answer">
+                    Personnage B
+                </button>
+
+                <button class="quiz-answer">
+                    Personnage C
+                </button>
+
+                <button class="quiz-answer">
+                    Personnage D
+                </button>
+
+            </div>
+
+            <div style="
+                display:flex;
+                justify-content:flex-end;
+                margin-top:25px;
+            ">
+
+                <button class="btn btn-primary">
+                    Question suivante →
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+<footer class="footer">
+    <div class="footer-container">
+        <p>© 2026 Anibook</p>
+    </div>
+</footer>
+
+</body>
+</html>

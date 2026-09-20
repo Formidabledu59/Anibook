@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anibook — Administration</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<nav class="navbar">
+    <div class="navbar-container">
+
+        <a href="index.html" class="logo">
+            <span class="logo-icon">A</span>
+            <span class="logo-text">Anibook</span>
+        </a>
+
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">Accueil</a>
+            <a href="characters.html" class="nav-link">Personnages</a>
+            <a href="random.html" class="nav-link">Random</a>
+            <a href="quiz.html" class="nav-link">Quiz</a>
+            <a href="admin.html" class="nav-link active">Admin</a>
+        </div>
+
+        <button class="nav-toggle" type="button">☰</button>
+
+    </div>
+</nav>
+
+<main>
+
+    <section class="page-header">
+
+        <div class="container">
+
+            <h1>
+                Administration
+            </h1>
+
+            <p>
+                Gère les personnages présents dans la base de données
+                Anibook.
+            </p>
+
+        </div>
+
+    </section>
+
+    <section class="admin-container">
+
+        <!-- Ajout d'un personnage -->
+        <div class="form-card">
+
+            <h2>
+                Ajouter un personnage
+            </h2>
+
+            <form>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label class="form-label">
+                            Nom
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            placeholder="Ex : Naruto Uzumaki"
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label class="form-label">
+                            Univers
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            placeholder="Ex : Naruto"
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label class="form-label">
+                            Image
+                        </label>
+
+                        <input
+                            type="url"
+                            class="form-control"
+                            placeholder="https://..."
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label class="form-label">
+                            Tags
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            placeholder="Anime, Ninja, Combat"
+                        >
+
+                    </div>
+
+                    <div class="form-group full">
+
+                        <label class="form-label">
+                            Description
+                        </label>
+
+                        <textarea
+                            class="form-control"
+                            placeholder="Description du personnage..."
+                        ></textarea>
+
+                    </div>
+
+                </div>
+
+                <div class="form-actions">
+
+                    <button
+                        type="reset"
+                        class="btn btn-secondary"
+                    >
+                        Réinitialiser
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        + Ajouter le personnage
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- Liste -->
+        <div class="form-card">
+
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                gap:15px;
+                margin-bottom:20px;
+            ">
+
+                <h2 style="margin:0;">
+                    Personnages
+                </h2>
+
+                <span class="tag green">
+                    128 personnages
+                </span>
+
+            </div>
+
+            <div class="table-wrapper">
+
+                <table class="data-table">
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Univers</th>
+                            <th>Tags</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>#001</td>
+
+                            <td>
+                                Naruto Uzumaki
+                            </td>
+
+                            <td>
+                                Naruto
+                            </td>
+
+                            <td>
+                                <span class="tag orange">
+                                    Ninja
+                                </span>
+                            </td>
+
+                            <td>
+                                <button class="btn btn-sm btn-secondary">
+                                    Modifier
+                                </button>
+
+                                <button class="btn btn-sm btn-danger">
+                                    Supprimer
+                                </button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>#002</td>
+
+                            <td>
+                                Luffy
+                            </td>
+
+                            <td>
+                                One Piece
+                            </td>
+
+                            <td>
+                                <span class="tag">
+                                    Pirate
+                                </span>
+                            </td>
+
+                            <td>
+                                <button class="btn btn-sm btn-secondary">
+                                    Modifier
+                                </button>
+
+                                <button class="btn btn-sm btn-danger">
+                                    Supprimer
+                                </button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>#003</td>
+
+                            <td>
+                                Goku
+                            </td>
+
+                            <td>
+                                Dragon Ball
+                            </td>
+
+                            <td>
+                                <span class="tag blue">
+                                    Saiyan
+                                </span>
+                            </td>
+
+                            <td>
+                                <button class="btn btn-sm btn-secondary">
+                                    Modifier
+                                </button>
+
+                                <button class="btn btn-sm btn-danger">
+                                    Supprimer
+                                </button>
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+<footer class="footer">
+    <div class="footer-container">
+        <p>© 2026 Anibook — Administration</p>
+    </div>
+</footer>
+
+</body>
+</html>
