@@ -85,6 +85,6 @@ frontend/
 - **Le navigateur bloque les requêtes** : servir `frontend` avec un serveur HTTP local au lieu d’ouvrir les fichiers avec `file://`.
 - **Un univers n’apparaît pas** : le créer dans l’administration puis recharger la page.
 - **Un tag n’apparaît pas dans la recherche** : le créer dans la section Tags puis recharger l’administration.
-- **La page Random ne répond pas** : l’interface appelle `/api/characters/random`, mais cette route n’est pas encore déclarée dans les routes backend actuelles.
+- **La page Random ne répond pas** : vérifier que le backend est reconstruit et que `GET /api/characters/random` répond correctement.
 
 En Docker, le frontend utilise automatiquement `/api`. Le fichier [nginx.conf](nginx.conf) transmet cette URL au service `backend`, ce qui rend l’application accessible depuis une autre machine via l’adresse IP du serveur CasaOS.

@@ -1,8 +1,8 @@
 const repository = require('./character.repository');
 
-function getAllCharacters() {
+function getAllCharacters(filters) {
     return new Promise((resolve, reject) => {
-        repository.findAll((error, characters) => {
+        repository.findAll(filters, (error, characters) => {
             if (error) {
                 reject(error);
                 return;
@@ -16,6 +16,19 @@ function getAllCharacters() {
 function getCharacterById(id) {
     return new Promise((resolve, reject) => {
         repository.findById(id, (error, character) => {
+            if (error) {
+                reject(error);
+                return;
+            }
+
+            resolve(character ?? null);
+        });
+    });
+}
+
+function getRandomCharacter() {
+    return new Promise((resolve, reject) => {
+        repository.findRandom((error, character) => {
             if (error) {
                 reject(error);
                 return;
@@ -71,6 +84,7 @@ function deleteCharacter(id) {
 module.exports = {
     getAllCharacters,
     getCharacterById,
+    getRandomCharacter,
     createCharacter,
     updateCharacter,
     deleteCharacter

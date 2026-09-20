@@ -10,9 +10,31 @@ function parseId(value) {
     return Number.isInteger(id) && id > 0 ? id : null;
 }
 
+function parseListFilters(query) {
+    const requestedLimit = Number(query.limit);
+    const requestedUniverseId = Number(query.universeId);
+
+    return {
+        search: typeof query.search === 'string'
+            ? query.search.trim()
+            : '',
+        universeId: Number.isInteger(requestedUniverseId) &&
+            requestedUniverseId > 0
+            ? requestedUniverseId
+            : null,
+        limit: Number.isInteger(requestedLimit) &&
+            requestedLimit > 0 &&
+            requestedLimit <= 50
+            ? requestedLimit
+            : 50
+    };
+}
+
 async function getAll(req, res, next) {
     try {
-        const characters = await service.getAllCharacters();
+        const characters = await service.getAllCharacters(
+            parseListFilters(req.query)
+        );
 
         res.json({
             characters
@@ -38,6 +60,23 @@ async function getById(req, res, next) {
         if (!character) {
             res.status(404).json({
                 error: 'Personnage introuvable'
+            });
+            return;
+        }
+
+        res.json(character);
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function getRandom(req, res, next) {
+    try {
+        const character = await service.getRandomCharacter();
+
+        if (!character) {
+            res.status(404).json({
+                error: 'Aucun personnage disponible'
             });
             return;
         }
@@ -134,6 +173,7 @@ async function remove(req, res, next) {
 module.exports = {
     getAll,
     getById,
+    getRandom,
     create,
     update,
     remove

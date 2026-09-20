@@ -1,6 +1,23 @@
 const db = require('../config/database');
 
-function findAll(callback) {
+function findAll(filters, callback) {
+    const conditions = [];
+    const parameters = [];
+
+    if (filters.search) {
+        conditions.push('LOWER(c.name) LIKE ?');
+        parameters.push(`%${filters.search.toLowerCase()}%`);
+    }
+
+    if (filters.universeId) {
+        conditions.push('c.universe_id = ?');
+        parameters.push(filters.universeId);
+    }
+
+    const whereClause = conditions.length > 0
+        ? `WHERE ${conditions.join(' AND ')}`
+        : '';
+
     const query = `
         SELECT
             c.id,
@@ -13,10 +30,14 @@ function findAll(callback) {
         FROM characters c
         INNER JOIN universes u
             ON u.id = c.universe_id
-        ORDER BY c.name
+        ${whereClause}
+        ORDER BY c.id DESC
+        LIMIT ?
     `;
 
-    db.all(query, [], callback);
+    parameters.push(filters.limit);
+
+    db.all(query, parameters, callback);
 }
 
 function findById(id, callback) {
@@ -36,6 +57,26 @@ function findById(id, callback) {
     `;
 
     db.get(query, [id], callback);
+}
+
+function findRandom(callback) {
+    const query = `
+        SELECT
+            c.id,
+            c.name,
+            c.icon,
+            c.illustration,
+            c.description,
+            u.id AS universe_id,
+            u.name AS universe
+        FROM characters c
+        INNER JOIN universes u
+            ON u.id = c.universe_id
+        ORDER BY RANDOM()
+        LIMIT 1
+    `;
+
+    db.get(query, [], callback);
 }
 
 function create(character, callback) {
@@ -122,6 +163,7 @@ function deleteById(id, callback) {
 module.exports = {
     findAll,
     findById,
+    findRandom,
     create,
     update,
     deleteById

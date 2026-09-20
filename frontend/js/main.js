@@ -128,6 +128,8 @@ let universes = [];
 
 let currentSearch = '';
 let currentUniverse = '';
+let characterSearchTimer = null;
+let characterRequestController = null;
 
 
 async function initializeCharactersPage() {
@@ -135,19 +137,8 @@ async function initializeCharactersPage() {
         document.getElementById('characters-loading');
 
     try {
-        const [
-            charactersResponse,
-            universesResponse
-        ] = await Promise.all([
-            fetch(`${API_URL}/characters`),
-            fetch(`${API_URL}/universes`)
-        ]);
-
-        if (!charactersResponse.ok) {
-            throw new Error(
-                'Impossible de récupérer les personnages.'
-            );
-        }
+        const universesResponse =
+            await fetch(`${API_URL}/universes`);
 
         if (!universesResponse.ok) {
             throw new Error(
@@ -155,20 +146,18 @@ async function initializeCharactersPage() {
             );
         }
 
-        const charactersData =
-            await charactersResponse.json();
-
         const universesData =
             await universesResponse.json();
 
-        characters = charactersData.characters;
-        universes = universesData.universes;
+        universes = Array.isArray(universesData)
+            ? universesData
+            : universesData.universes || [];
 
         populateUniverseFilter();
 
         setupCharacterFilters();
 
-        renderCharacters();
+        await loadCharacters();
 
     } catch (error) {
         console.error(
@@ -178,6 +167,16 @@ async function initializeCharactersPage() {
 
         loading.textContent =
             'Impossible de charger les personnages.';
+
+        loading.hidden = false;
+
+        document.getElementById(
+            'characters-empty'
+        ).hidden = true;
+
+        document.getElementById(
+            'characters-grid'
+        ).innerHTML = '';
     }
 }
 
@@ -228,7 +227,12 @@ function setupCharacterFilters() {
                     .trim()
                     .toLowerCase();
 
-            renderCharacters();
+            clearTimeout(characterSearchTimer);
+
+            characterSearchTimer = setTimeout(
+                loadCharacters,
+                250
+            );
         }
     );
 
@@ -238,7 +242,7 @@ function setupCharacterFilters() {
             currentUniverse =
                 event.target.value;
 
-            renderCharacters();
+            loadCharacters();
         }
     );
 
@@ -251,7 +255,7 @@ function setupCharacterFilters() {
             searchInput.value = '';
             universeFilter.value = '';
 
-            renderCharacters();
+            loadCharacters();
         }
     );
 }
@@ -264,20 +268,7 @@ function setupCharacterFilters() {
  */
 
 function getFilteredCharacters() {
-    return characters.filter((character) => {
-
-        const matchesSearch =
-            character.name
-                .toLowerCase()
-                .includes(currentSearch);
-
-        const matchesUniverse =
-            !currentUniverse ||
-            String(character.universe_id) ===
-                String(currentUniverse);
-
-        return matchesSearch && matchesUniverse;
-    });
+    return characters;
 }
 
 
@@ -301,6 +292,7 @@ function renderCharacters() {
         getFilteredCharacters();
 
     loading.hidden = true;
+    empty.hidden = true;
 
     grid.innerHTML = '';
 
@@ -308,8 +300,6 @@ function renderCharacters() {
         empty.hidden = false;
         return;
     }
-
-    empty.hidden = true;
 
     filteredCharacters.forEach((character) => {
         grid.appendChild(
@@ -476,8 +466,12 @@ async function loadRandomCharacter() {
     character.hidden = true;
 
     try {
-        const response =
-            await fetch(`${API_URL}/characters/random`);
+        const [response] = await Promise.all([
+            fetch(`${API_URL}/characters/random`),
+            new Promise((resolve) => {
+                setTimeout(resolve, 3000);
+            })
+        ]);
 
         if (!response.ok) {
             throw new Error(
@@ -488,8 +482,15 @@ async function loadRandomCharacter() {
         const randomCharacter =
             await response.json();
 
+        if (!randomCharacter || !randomCharacter.id) {
+            throw new Error(
+                'Aucun personnage disponible.'
+            );
+        }
+
         displayRandomCharacter(randomCharacter);
 
+        error.hidden = true;
         character.hidden = false;
 
     } catch (requestError) {
@@ -499,6 +500,7 @@ async function loadRandomCharacter() {
         );
 
         error.textContent =
+            requestError.message ||
             'Impossible de récupérer un personnage.';
 
         error.hidden = false;
@@ -1809,4 +1811,78 @@ function escapeHtml(value) {
         value ?? '';
 
     return div.innerHTML;
+}
+
+
+async function loadCharacters() {
+    const loading =
+        document.getElementById('characters-loading');
+
+    const empty =
+        document.getElementById('characters-empty');
+
+    const grid =
+        document.getElementById('characters-grid');
+
+    if (characterRequestController) {
+        characterRequestController.abort();
+    }
+
+    characterRequestController = new AbortController();
+
+    const query = new URLSearchParams({
+        limit: '50'
+    });
+
+    if (currentSearch) {
+        query.set('search', currentSearch);
+    }
+
+    if (currentUniverse) {
+        query.set('universeId', currentUniverse);
+    }
+
+    loading.textContent =
+        'Chargement des personnages...';
+    loading.hidden = false;
+    empty.hidden = true;
+    grid.innerHTML = '';
+
+    try {
+        const response = await fetch(
+            `${API_URL}/characters?${query.toString()}`,
+            {
+                signal: characterRequestController.signal
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                'Impossible de récupérer les personnages.'
+            );
+        }
+
+        const data = await response.json();
+
+        characters = Array.isArray(data)
+            ? data
+            : data.characters || [];
+
+        renderCharacters();
+    } catch (error) {
+        if (error.name === 'AbortError') {
+            return;
+        }
+
+        console.error(
+            'Erreur lors du chargement des personnages :',
+            error
+        );
+
+        loading.textContent =
+            'Impossible de charger les personnages.';
+        loading.hidden = false;
+        empty.hidden = true;
+        grid.innerHTML = '';
+    }
 }

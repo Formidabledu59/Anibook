@@ -55,8 +55,10 @@ Réponse :
 ### Lister les personnages
 
 ```http
-GET /api/characters
+GET /api/characters?search=son&universeId=1&limit=50
 ```
+
+Tous les paramètres sont facultatifs. Sans filtre, l’API renvoie les 50 personnages les plus récemment créés. `search` filtre le nom, `universeId` filtre l’univers et `limit` est limité à 50.
 
 Réponse :
 
@@ -120,7 +122,7 @@ DELETE /api/characters/:id
 
 La réponse est `204 No Content`. Les associations avec les tags sont supprimées automatiquement par SQLite.
 
-> La route `GET /api/characters/random` est appelée par la page frontend Random, mais elle n’est pas encore implémentée dans les routes backend actuelles. La page nécessite donc une évolution backend pour fonctionner complètement.
+La route `GET /api/characters/random` renvoie un personnage choisi aléatoirement. Elle renvoie `404` si aucun personnage n’existe.
 
 ## API des univers
 

@@ -5,6 +5,7 @@ const controller = require('./character.controller');
 const router = express.Router();
 
 router.get('/', controller.getAll);
+router.get('/random', controller.getRandom);
 router.get('/:id', controller.getById);
 
 router.post('/', controller.create);
