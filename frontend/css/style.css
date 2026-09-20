@@ -1215,6 +1215,117 @@ textarea.form-control {
 
 select.form-control {
     cursor: pointer;
+
+    appearance: none;
+    padding-right: 42px;
+
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--text-secondary) 50%),
+        linear-gradient(135deg, var(--text-secondary) 50%, transparent 50%);
+    background-position:
+        calc(100% - 18px) 19px,
+        calc(100% - 12px) 19px;
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
+}
+
+select.form-control option {
+    background: var(--bg-card);
+    color: var(--text-primary);
+}
+
+.tag-picker-group {
+    min-width: 0;
+}
+
+.tag-picker {
+    position: relative;
+}
+
+.selected-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    margin-bottom: 8px;
+}
+
+.selected-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    padding: 4px 8px 4px 10px;
+
+    border: 1px solid rgba(139, 92, 246, 0.35);
+    border-radius: var(--radius-full);
+
+    background: rgba(139, 92, 246, 0.14);
+    color: var(--primary-light);
+    font-size: 0.78rem;
+    font-weight: 650;
+}
+
+.selected-tag-remove {
+    width: 18px;
+    height: 18px;
+
+    display: grid;
+    place-items: center;
+
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+
+    background: transparent;
+    color: var(--text-secondary);
+    line-height: 1;
+}
+
+.selected-tag-remove:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--text-primary);
+}
+
+.tag-suggestions {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    left: 0;
+    z-index: 20;
+
+    overflow: hidden;
+
+    border: 1px solid var(--border-hover);
+    border-radius: var(--radius-sm);
+
+    background: var(--bg-card);
+    box-shadow: var(--shadow-md);
+}
+
+.tag-suggestion {
+    width: 100%;
+
+    display: block;
+
+    padding: 10px 13px;
+    border: 0;
+    border-bottom: 1px solid var(--border);
+
+    background: transparent;
+    color: var(--text-primary);
+    text-align: left;
+}
+
+.tag-suggestion:last-child {
+    border-bottom: 0;
+}
+
+.tag-suggestion:hover,
+.tag-suggestion:focus-visible {
+    background: rgba(139, 92, 246, 0.14);
+    color: var(--primary-light);
+    outline: none;
 }
 
 .form-actions {

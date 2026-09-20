@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Anibook — Administration</title>
+
     <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -18,14 +20,32 @@
         </a>
 
         <div class="nav-links">
-            <a href="index.html" class="nav-link">Accueil</a>
-            <a href="characters.html" class="nav-link">Personnages</a>
-            <a href="random.html" class="nav-link">Random</a>
-            <a href="quiz.html" class="nav-link">Quiz</a>
-            <a href="admin.html" class="nav-link active">Admin</a>
+
+            <a href="index.html" class="nav-link">
+                Accueil
+            </a>
+
+            <a href="characters.html" class="nav-link">
+                Personnages
+            </a>
+
+            <a href="random.html" class="nav-link">
+                Random
+            </a>
+
+            <a href="quiz.html" class="nav-link">
+                Quiz
+            </a>
+
+            <a href="admin.html" class="nav-link active">
+                Admin
+            </a>
+
         </div>
 
-        <button class="nav-toggle" type="button">☰</button>
+        <button class="nav-toggle" type="button">
+            ☰
+        </button>
 
     </div>
 </nav>
@@ -41,8 +61,7 @@
             </h1>
 
             <p>
-                Gère les personnages présents dans la base de données
-                Anibook.
+                Gère les personnages, univers et tags d'Anibook.
             </p>
 
         </div>
@@ -51,235 +70,460 @@
 
     <section class="admin-container">
 
-        <!-- Ajout d'un personnage -->
+        <!-- =====================================================
+             SELECTION DE LA RESSOURCE
+             ===================================================== -->
+
         <div class="form-card">
 
             <h2>
-                Ajouter un personnage
+                Gestion
             </h2>
 
-            <form>
+            <select
+                id="admin-resource"
+                class="form-control"
+            >
+                <option value="characters">
+                    Personnages
+                </option>
 
-                <div class="form-grid">
+                <option value="universes">
+                    Univers
+                </option>
 
-                    <div class="form-group">
-
-                        <label class="form-label">
-                            Nom
-                        </label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            placeholder="Ex : Naruto Uzumaki"
-                        >
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label class="form-label">
-                            Univers
-                        </label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            placeholder="Ex : Naruto"
-                        >
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label class="form-label">
-                            Image
-                        </label>
-
-                        <input
-                            type="url"
-                            class="form-control"
-                            placeholder="https://..."
-                        >
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label class="form-label">
-                            Tags
-                        </label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            placeholder="Anime, Ninja, Combat"
-                        >
-
-                    </div>
-
-                    <div class="form-group full">
-
-                        <label class="form-label">
-                            Description
-                        </label>
-
-                        <textarea
-                            class="form-control"
-                            placeholder="Description du personnage..."
-                        ></textarea>
-
-                    </div>
-
-                </div>
-
-                <div class="form-actions">
-
-                    <button
-                        type="reset"
-                        class="btn btn-secondary"
-                    >
-                        Réinitialiser
-                    </button>
-
-                    <button
-                        type="submit"
-                        class="btn btn-primary"
-                    >
-                        + Ajouter le personnage
-                    </button>
-
-                </div>
-
-            </form>
+                <option value="tags">
+                    Tags
+                </option>
+            </select>
 
         </div>
 
 
-        <!-- Liste -->
-        <div class="form-card">
+        <!-- =====================================================
+             MESSAGE
+             ===================================================== -->
 
-            <div style="
-                display:flex;
-                justify-content:space-between;
-                align-items:center;
-                gap:15px;
-                margin-bottom:20px;
-            ">
+        <div
+            id="admin-message"
+            class="alert"
+            hidden
+        ></div>
 
-                <h2 style="margin:0;">
-                    Personnages
+
+        <!-- =====================================================
+             PERSONNAGES
+             ===================================================== -->
+
+        <div
+            id="characters-admin"
+            class="admin-resource"
+        >
+
+            <div class="form-card">
+
+                <h2 id="character-form-title">
+                    Ajouter un personnage
                 </h2>
 
-                <span class="tag green">
-                    128 personnages
-                </span>
+                <form id="character-form">
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label
+                                for="character-name"
+                                class="form-label"
+                            >
+                                Nom
+                            </label>
+
+                            <input
+                                id="character-name"
+                                type="text"
+                                class="form-control"
+                                placeholder="Ex : Naruto Uzumaki"
+                                required
+                            >
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label
+                                for="character-universe"
+                                class="form-label"
+                            >
+                                Univers
+                            </label>
+
+                            <select
+                                id="character-universe"
+                                class="form-control"
+                                required
+                            >
+                                <option value="">
+                                    Sélectionner un univers
+                                </option>
+                            </select>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label
+                                for="character-image"
+                                class="form-label"
+                            >
+                                Image
+                            </label>
+
+                            <input
+                                id="character-image"
+                                type="url"
+                                class="form-control"
+                                placeholder="https://..."
+                            >
+
+                        </div>
+
+                        <div class="form-group tag-picker-group">
+
+                            <label
+                                for="character-tags"
+                                class="form-label"
+                            >
+                                Tags
+                            </label>
+
+                            <div
+                                id="character-tag-picker"
+                                class="tag-picker"
+                            >
+                                <div
+                                    id="selected-character-tags"
+                                    class="selected-tags"
+                                ></div>
+
+                                <input
+                                    id="character-tags"
+                                    type="search"
+                                    class="form-control"
+                                    autocomplete="off"
+                                    placeholder="Rechercher un tag..."
+                                >
+
+                                <div
+                                    id="character-tag-suggestions"
+                                    class="tag-suggestions"
+                                    hidden
+                                ></div>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group full">
+
+                            <label
+                                for="character-description"
+                                class="form-label"
+                            >
+                                Description
+                            </label>
+
+                            <textarea
+                                id="character-description"
+                                class="form-control"
+                                placeholder="Description du personnage..."
+                            ></textarea>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-actions">
+
+                        <button
+                            id="cancel-character-edit"
+                            type="button"
+                            class="btn btn-secondary"
+                            hidden
+                        >
+                            Annuler
+                        </button>
+
+                        <button
+                            type="reset"
+                            class="btn btn-secondary"
+                        >
+                            Réinitialiser
+                        </button>
+
+                        <button
+                            id="submit-character"
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            + Ajouter le personnage
+                        </button>
+
+                    </div>
+
+                </form>
 
             </div>
 
-            <div class="table-wrapper">
+            <div class="form-card">
 
-                <table class="data-table">
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    gap:15px;
+                    margin-bottom:20px;
+                ">
 
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nom</th>
-                            <th>Univers</th>
-                            <th>Tags</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
+                    <h2 style="margin:0;">
+                        Personnages
+                    </h2>
 
-                    <tbody>
+                    <span
+                        id="characters-total"
+                        class="tag green"
+                    >
+                        0 personnages
+                    </span>
 
-                        <tr>
-                            <td>#001</td>
+                </div>
 
-                            <td>
-                                Naruto Uzumaki
-                            </td>
+                <div
+                    id="admin-loading"
+                    class="loading"
+                >
+                    Chargement...
+                </div>
 
-                            <td>
-                                Naruto
-                            </td>
+                <div class="table-wrapper">
 
-                            <td>
-                                <span class="tag orange">
-                                    Ninja
-                                </span>
-                            </td>
+                    <table class="data-table">
 
-                            <td>
-                                <button class="btn btn-sm btn-secondary">
-                                    Modifier
-                                </button>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nom</th>
+                                <th>Univers</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
 
-                                <button class="btn btn-sm btn-danger">
-                                    Supprimer
-                                </button>
-                            </td>
-                        </tr>
+                        <tbody
+                            id="characters-table-body"
+                        ></tbody>
 
-                        <tr>
-                            <td>#002</td>
+                    </table>
 
-                            <td>
-                                Luffy
-                            </td>
+                </div>
 
-                            <td>
-                                One Piece
-                            </td>
+            </div>
 
-                            <td>
-                                <span class="tag">
-                                    Pirate
-                                </span>
-                            </td>
+        </div>
 
-                            <td>
-                                <button class="btn btn-sm btn-secondary">
-                                    Modifier
-                                </button>
 
-                                <button class="btn btn-sm btn-danger">
-                                    Supprimer
-                                </button>
-                            </td>
-                        </tr>
+        <!-- =====================================================
+             UNIVERS
+             ===================================================== -->
 
-                        <tr>
-                            <td>#003</td>
+        <div
+            id="universes-admin"
+            class="admin-resource"
+            hidden
+        >
 
-                            <td>
-                                Goku
-                            </td>
+            <div class="form-card">
 
-                            <td>
-                                Dragon Ball
-                            </td>
+                <h2 id="universe-form-title">
+                    Ajouter un univers
+                </h2>
 
-                            <td>
-                                <span class="tag blue">
-                                    Saiyan
-                                </span>
-                            </td>
+                <form id="universe-form">
 
-                            <td>
-                                <button class="btn btn-sm btn-secondary">
-                                    Modifier
-                                </button>
+                    <div class="form-group">
 
-                                <button class="btn btn-sm btn-danger">
-                                    Supprimer
-                                </button>
-                            </td>
-                        </tr>
+                        <label
+                            for="universe-name"
+                            class="form-label"
+                        >
+                            Nom de l'univers
+                        </label>
 
-                    </tbody>
+                        <input
+                            id="universe-name"
+                            type="text"
+                            class="form-control"
+                            placeholder="Ex : Naruto"
+                            required
+                        >
 
-                </table>
+                    </div>
+
+                    <div class="form-actions">
+
+                        <button
+                            id="cancel-universe-edit"
+                            type="button"
+                            class="btn btn-secondary"
+                            hidden
+                        >
+                            Annuler
+                        </button>
+
+                        <button
+                            type="reset"
+                            class="btn btn-secondary"
+                        >
+                            Réinitialiser
+                        </button>
+
+                        <button
+                            id="submit-universe"
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            + Ajouter l'univers
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div class="form-card">
+
+                <h2>
+                    Univers
+                </h2>
+
+                <div class="table-wrapper">
+
+                    <table class="data-table">
+
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nom</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody
+                            id="universes-table-body"
+                        ></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             TAGS
+             ===================================================== -->
+
+        <div
+            id="tags-admin"
+            class="admin-resource"
+            hidden
+        >
+
+            <div class="form-card">
+
+                <h2 id="tag-form-title">
+                    Ajouter un tag
+                </h2>
+
+                <form id="tag-form">
+
+                    <div class="form-group">
+
+                        <label
+                            for="tag-name"
+                            class="form-label"
+                        >
+                            Nom du tag
+                        </label>
+
+                        <input
+                            id="tag-name"
+                            type="text"
+                            class="form-control"
+                            placeholder="Ex : Ninja"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="form-actions">
+
+                        <button
+                            id="cancel-tag-edit"
+                            type="button"
+                            class="btn btn-secondary"
+                            hidden
+                        >
+                            Annuler
+                        </button>
+
+                        <button
+                            type="reset"
+                            class="btn btn-secondary"
+                        >
+                            Réinitialiser
+                        </button>
+
+                        <button
+                            id="submit-tag"
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            + Ajouter le tag
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div class="form-card">
+
+                <h2>
+                    Tags
+                </h2>
+
+                <div class="table-wrapper">
+
+                    <table class="data-table">
+
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nom</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody
+                            id="tags-table-body"
+                        ></tbody>
+
+                    </table>
+
+                </div>
 
             </div>
 
@@ -290,10 +534,18 @@
 </main>
 
 <footer class="footer">
+
     <div class="footer-container">
-        <p>© 2026 Anibook — Administration</p>
+
+        <p>
+            © 2026 Anibook — Administration
+        </p>
+
     </div>
+
 </footer>
+
+<script src="js/main.js"></script>
 
 </body>
 </html>

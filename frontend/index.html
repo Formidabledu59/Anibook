@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Anibook — Accueil</title>
+
     <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -11,6 +13,7 @@
 
 <nav class="navbar">
     <div class="navbar-container">
+
         <a href="index.html" class="logo">
             <span class="logo-icon">A</span>
             <span class="logo-text">Anibook</span>
@@ -24,18 +27,23 @@
             <a href="admin.html" class="nav-link">Admin</a>
         </div>
 
-        <button class="nav-toggle" type="button">☰</button>
+        <button class="nav-toggle" type="button">
+            ☰
+        </button>
+
     </div>
 </nav>
 
 <main>
 
     <section class="hero">
+
         <div class="container">
+
             <div class="hero-content">
 
                 <div class="hero-badge">
-                    ● API opérationnelle
+                    <span id="api-status">● Vérification de l'API...</span>
                 </div>
 
                 <h1 class="hero-title">
@@ -50,55 +58,118 @@
                 </p>
 
                 <div class="hero-actions">
-                    <a href="characters.html" class="btn btn-primary btn-lg">
+
+                    <a
+                        href="characters.html"
+                        class="btn btn-primary btn-lg"
+                    >
                         Explorer les personnages
                     </a>
 
-                    <a href="random.html" class="btn btn-secondary btn-lg">
+                    <a
+                        href="random.html"
+                        class="btn btn-secondary btn-lg"
+                    >
                         Personnage aléatoire
                     </a>
+
                 </div>
 
                 <div class="stats-grid">
 
                     <div class="stat-card">
-                        <span class="stat-value">128</span>
-                        <span class="stat-label">Personnages</span>
+                        <span
+                            class="stat-value"
+                            id="characters-count"
+                        >
+                            -
+                        </span>
+
+                        <span class="stat-label">
+                            Personnages
+                        </span>
                     </div>
 
                     <div class="stat-card">
-                        <span class="stat-value">24</span>
-                        <span class="stat-label">Univers</span>
+                        <span
+                            class="stat-value"
+                            id="universes-count"
+                        >
+                            -
+                        </span>
+
+                        <span class="stat-label">
+                            Univers
+                        </span>
                     </div>
 
                     <div class="stat-card">
-                        <span class="stat-value">50+</span>
-                        <span class="stat-label">Questions</span>
+                        <span
+                            class="stat-value"
+                            id="questions-count"
+                        >
+                            50+
+                        </span>
+
+                        <span class="stat-label">
+                            Questions
+                        </span>
                     </div>
 
                     <div class="stat-card">
-                        <span class="stat-value">99%</span>
-                        <span class="stat-label">API uptime</span>
+                        <span
+                            class="stat-value"
+                            id="api-uptime"
+                        >
+                            -
+                        </span>
+
+                        <span class="stat-label">
+                            API status
+                        </span>
                     </div>
 
                 </div>
 
             </div>
+
         </div>
+
     </section>
 
 </main>
 
 <footer class="footer">
+
     <div class="footer-container">
-        <p>© 2026 Anibook — Projet personnel</p>
+
+        <p>
+            © 2026 Anibook — Projet personnel
+        </p>
 
         <div class="footer-links">
-            <a href="characters.html" class="footer-link">Personnages</a>
-            <a href="quiz.html" class="footer-link">Quiz</a>
+
+            <a
+                href="characters.html"
+                class="footer-link"
+            >
+                Personnages
+            </a>
+
+            <a
+                href="quiz.html"
+                class="footer-link"
+            >
+                Quiz
+            </a>
+
         </div>
+
     </div>
+
 </footer>
+
+<script src="js/main.js"></script>
 
 </body>
 </html>

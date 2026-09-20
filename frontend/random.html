@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Anibook — Random</title>
+
     <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -18,14 +20,32 @@
         </a>
 
         <div class="nav-links">
-            <a href="index.html" class="nav-link">Accueil</a>
-            <a href="characters.html" class="nav-link">Personnages</a>
-            <a href="random.html" class="nav-link active">Random</a>
-            <a href="quiz.html" class="nav-link">Quiz</a>
-            <a href="admin.html" class="nav-link">Admin</a>
+
+            <a href="index.html" class="nav-link">
+                Accueil
+            </a>
+
+            <a href="characters.html" class="nav-link">
+                Personnages
+            </a>
+
+            <a href="random.html" class="nav-link active">
+                Random
+            </a>
+
+            <a href="quiz.html" class="nav-link">
+                Quiz
+            </a>
+
+            <a href="admin.html" class="nav-link">
+                Admin
+            </a>
+
         </div>
 
-        <button class="nav-toggle" type="button">☰</button>
+        <button class="nav-toggle" type="button">
+            ☰
+        </button>
 
     </div>
 </nav>
@@ -38,7 +58,9 @@
 
             <h1>
                 Personnage
-                <span class="gradient-text">aléatoire</span>
+                <span class="gradient-text">
+                    aléatoire
+                </span>
             </h1>
 
             <p>
@@ -56,19 +78,44 @@
 
             <div class="randomizer-controls">
 
-                <button class="btn btn-primary btn-lg">
+                <button
+                    id="random-button"
+                    class="btn btn-primary btn-lg"
+                    type="button"
+                >
                     ⚡ Piocher un personnage
                 </button>
 
             </div>
 
-            <div class="random-character">
+            <div
+                id="random-loading"
+                class="loading"
+                hidden
+            >
+                Recherche d'un personnage...
+            </div>
+
+            <div
+                id="random-error"
+                class="alert"
+                hidden
+            >
+                Impossible de récupérer un personnage.
+            </div>
+
+            <div
+                id="random-character"
+                class="random-character"
+                hidden
+            >
 
                 <div class="random-character-image">
 
                     <img
-                        src="https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=700&q=80"
-                        alt="Akira"
+                        id="random-image"
+                        src=""
+                        alt=""
                     >
 
                 </div>
@@ -79,27 +126,30 @@
                         Personnage aléatoire
                     </span>
 
-                    <h2 class="random-character-name">
-                        Akira
-                    </h2>
+                    <h2
+                        id="random-name"
+                        class="random-character-name"
+                    ></h2>
 
-                    <p class="random-character-description">
-                        Akira est un combattant mystérieux capable
-                        de manipuler une énergie extrêmement rare.
-                        Son passé reste encore largement inconnu.
-                    </p>
+                    <p
+                        id="random-description"
+                        class="random-character-description"
+                    ></p>
 
-                    <div class="tags">
-                        <span class="tag">Anime</span>
-                        <span class="tag blue">Combat</span>
-                        <span class="tag orange">Puissant</span>
-                    </div>
+                    <div
+                        id="random-tags"
+                        class="tags"
+                    ></div>
 
                     <br>
 
-                    <button class="btn btn-secondary">
+                    <a
+                        id="random-details"
+                        class="btn btn-secondary"
+                        href="#"
+                    >
                         Voir le personnage
-                    </button>
+                    </a>
 
                 </div>
 
@@ -112,10 +162,18 @@
 </main>
 
 <footer class="footer">
+
     <div class="footer-container">
-        <p>© 2026 Anibook</p>
+
+        <p>
+            © 2026 Anibook
+        </p>
+
     </div>
+
 </footer>
+
+<script src="js/main.js"></script>
 
 </body>
 </html>

@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Anibook — Personnages</title>
+
     <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -18,14 +20,30 @@
         </a>
 
         <div class="nav-links">
-            <a href="index.html" class="nav-link">Accueil</a>
-            <a href="characters.html" class="nav-link active">Personnages</a>
-            <a href="random.html" class="nav-link">Random</a>
-            <a href="quiz.html" class="nav-link">Quiz</a>
-            <a href="admin.html" class="nav-link">Admin</a>
+            <a href="index.html" class="nav-link">
+                Accueil
+            </a>
+
+            <a href="characters.html" class="nav-link active">
+                Personnages
+            </a>
+
+            <a href="random.html" class="nav-link">
+                Random
+            </a>
+
+            <a href="quiz.html" class="nav-link">
+                Quiz
+            </a>
+
+            <a href="admin.html" class="nav-link">
+                Admin
+            </a>
         </div>
 
-        <button class="nav-toggle" type="button">☰</button>
+        <button class="nav-toggle" type="button">
+            ☰
+        </button>
 
     </div>
 </nav>
@@ -37,7 +55,9 @@
 
             <h1>
                 Catalogue des
-                <span class="gradient-text">personnages</span>
+                <span class="gradient-text">
+                    personnages
+                </span>
             </h1>
 
             <p>
@@ -53,158 +73,77 @@
         <div class="filters">
 
             <div class="search-box">
-                <span class="search-icon">⌕</span>
+
+                <span class="search-icon">
+                    ⌕
+                </span>
 
                 <input
                     type="search"
+                    id="character-search"
                     class="form-control"
                     placeholder="Rechercher un personnage..."
+                    autocomplete="off"
                 >
+
             </div>
 
-            <select class="form-control">
-                <option>Tous les univers</option>
-                <option>One Piece</option>
-                <option>Naruto</option>
-                <option>Dragon Ball</option>
-                <option>Jujutsu Kaisen</option>
+            <select
+                id="universe-filter"
+                class="form-control"
+            >
+                <option value="">
+                    Tous les univers
+                </option>
             </select>
 
-            <button class="btn btn-secondary">
-                Filtrer
+            <button
+                id="filter-reset"
+                class="btn btn-secondary"
+                type="button"
+            >
+                Réinitialiser
             </button>
 
         </div>
 
-        <div class="characters-grid">
-
-            <article class="character-card">
-
-                <div class="character-image">
-                    <img
-                        src="https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=600&q=80"
-                        alt="Personnage 1"
-                    >
-                </div>
-
-                <div class="character-info">
-
-                    <h2 class="character-name">
-                        Akira
-                    </h2>
-
-                    <p class="character-description">
-                        Un personnage mystérieux possédant une
-                        incroyable puissance.
-                    </p>
-
-                    <div class="tags">
-                        <span class="tag">Anime</span>
-                        <span class="tag blue">Combat</span>
-                    </div>
-
-                </div>
-
-            </article>
-
-            <article class="character-card">
-
-                <div class="character-image">
-                    <img
-                        src="https://images.unsplash.com/photo-1560972550-aba3456b5564?auto=format&fit=crop&w=600&q=80"
-                        alt="Personnage 2"
-                    >
-                </div>
-
-                <div class="character-info">
-
-                    <h2 class="character-name">
-                        Renji
-                    </h2>
-
-                    <p class="character-description">
-                        Un combattant rapide utilisant une technique
-                        particulièrement puissante.
-                    </p>
-
-                    <div class="tags">
-                        <span class="tag orange">Action</span>
-                        <span class="tag">Shonen</span>
-                    </div>
-
-                </div>
-
-            </article>
-
-            <article class="character-card">
-
-                <div class="character-image">
-                    <img
-                        src="https://images.unsplash.com/photo-1618336753974-aae8e04506aa?auto=format&fit=crop&w=600&q=80"
-                        alt="Personnage 3"
-                    >
-                </div>
-
-                <div class="character-info">
-
-                    <h2 class="character-name">
-                        Kaori
-                    </h2>
-
-                    <p class="character-description">
-                        Une combattante spécialisée dans les attaques
-                        à longue distance.
-                    </p>
-
-                    <div class="tags">
-                        <span class="tag green">Héroïne</span>
-                        <span class="tag blue">Magie</span>
-                    </div>
-
-                </div>
-
-            </article>
-
-            <article class="character-card">
-
-                <div class="character-image">
-                    <img
-                        src="https://images.unsplash.com/photo-1614583224978-f0e7e7e5f7e1?auto=format&fit=crop&w=600&q=80"
-                        alt="Personnage 4"
-                    >
-                </div>
-
-                <div class="character-info">
-
-                    <h2 class="character-name">
-                        Kaito
-                    </h2>
-
-                    <p class="character-description">
-                        Un personnage solitaire dont les capacités
-                        dépassent largement celles des autres.
-                    </p>
-
-                    <div class="tags">
-                        <span class="tag red">Villain</span>
-                        <span class="tag">Dark</span>
-                    </div>
-
-                </div>
-
-            </article>
-
+        <div
+            id="characters-loading"
+            class="loading"
+        >
+            Chargement des personnages...
         </div>
+
+        <div
+            id="characters-empty"
+            class="empty-state"
+            hidden
+        >
+            Aucun personnage ne correspond à votre recherche.
+        </div>
+
+        <div
+            id="characters-grid"
+            class="characters-grid"
+        ></div>
 
     </section>
 
 </main>
 
 <footer class="footer">
+
     <div class="footer-container">
-        <p>© 2026 Anibook</p>
+
+        <p>
+            © 2026 Anibook
+        </p>
+
     </div>
+
 </footer>
+
+<script src="js/main.js"></script>
 
 </body>
 </html>
