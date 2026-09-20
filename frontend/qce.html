@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anibook — Qui est-ce ?</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<nav class="navbar">
+    <div class="navbar-container">
+
+        <a href="index.html" class="logo">
+            <span class="logo-icon">A</span>
+            <span class="logo-text">Anibook</span>
+        </a>
+
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">Accueil</a>
+            <a href="characters.html" class="nav-link">Personnages</a>
+            <a href="random.html" class="nav-link">Random</a>
+            <a href="qce.html" class="nav-link active">QEC</a>
+            <a href="admin.html" class="nav-link">Admin</a>
+        </div>
+
+        <button class="nav-toggle" type="button">☰</button>
+
+    </div>
+</nav>
+
+<main>
+
+    <section class="page-header">
+        <div class="container">
+            <h1><span class="gradient-text">Qui est-ce ?</span></h1>
+            <p>Crée un plateau, partage son code et élimine les cartes au fil de la partie.</p>
+        </div>
+    </section>
+
+    <section class="quiz-container who-game-container">
+        <div id="quiz-created-code" class="who-created-code who-created-code-banner" hidden>
+            <span>Code de la partie</span>
+            <strong id="quiz-created-code-value"></strong>
+        </div>
+
+        <div id="who-step-one-grid" class="who-step-one-grid">
+            <div class="quiz-card who-setup-card">
+            <div class="who-setup-heading">
+                <div>
+                    <span class="tag orange">Étape 1</span>
+                    <h2>Créer une partie</h2>
+                </div>
+                <span id="quiz-character-count" class="tag green">0 personnage</span>
+            </div>
+
+            <div class="who-filters">
+                <div class="form-group">
+                    <label for="quiz-universe-filter" class="form-label">Univers</label>
+                    <select id="quiz-universe-filter" class="form-control">
+                        <option value="">Tous les univers</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="quiz-tag-filter" class="form-label">Tag</label>
+                    <select id="quiz-tag-filter" class="form-control">
+                        <option value="">Tous les tags</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="quiz-board-size" class="form-label">Taille du plateau</label>
+                    <select id="quiz-board-size" class="form-control">
+                        <option value="12">12 cartes</option>
+                        <option value="24" selected>24 cartes</option>
+                        <option value="50">50 cartes</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="who-setup-actions">
+                <button id="quiz-start" class="btn btn-primary" type="button">Créer la partie</button>
+            </div>
+
+            <p id="quiz-setup-message" class="quiz-message" hidden></p>
+            </div>
+
+            <aside class="quiz-card who-session-list-card">
+                <div class="who-session-list-heading">
+                    <div>
+                        <span class="tag blue">En ligne</span>
+                        <h2>Parties disponibles</h2>
+                    </div>
+                    <button id="quiz-refresh-sessions" class="btn btn-sm btn-secondary" type="button">Actualiser</button>
+                </div>
+                <input
+                    id="quiz-session-search"
+                    class="form-control"
+                    type="search"
+                    placeholder="Rechercher une partie..."
+                    autocomplete="off"
+                >
+                <div id="quiz-session-list" class="who-session-list">
+                    <span class="loading-inline">Chargement des parties...</span>
+                </div>
+            </aside>
+        </div>
+
+        <section id="who-board" class="who-board" hidden>
+            <div class="who-board-header">
+                <div>
+                    <span class="tag blue">Étape 2</span>
+                    <h2>Plateau <span id="quiz-active-code"></span></h2>
+                </div>
+                <div class="who-board-header-actions">
+                    <div class="who-board-stats">
+                        <span id="quiz-visible-count">0 visibles</span>
+                        <span id="quiz-hidden-count">0 éliminées</span>
+                    </div>
+                    <button id="quiz-back-to-sessions" class="btn btn-secondary" type="button">
+                        Retour aux parties
+                    </button>
+                </div>
+            </div>
+
+            <p class="who-board-help">Clique sur une carte pour la retourner ou la masquer. Sur mobile, les cartes éliminées restent accessibles dans le bouton ci-dessous.</p>
+
+            <button id="quiz-show-eliminated" class="btn btn-secondary who-mobile-toggle" type="button">Afficher les cartes éliminées</button>
+            <div id="quiz-board-grid" class="who-board-grid"></div>
+        </section>
+    </section>
+
+</main>
+
+<footer class="footer">
+    <div class="footer-container">
+        <p>© 2026 Anibook</p>
+    </div>
+</footer>
+
+<script src="js/main.js"></script>
+
+</body>
+</html>

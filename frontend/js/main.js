@@ -24,6 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
         initializeCharacterDetailPage();
     }
 
+    if (document.getElementById('who-board')) {
+        initializeWhoGamePage();
+    }
+
     if (document.getElementById('character-form')) {
         initializeAdminPage();
     }
@@ -755,6 +759,7 @@ async function initializeCharacterDetailPage() {
 let adminCharacters = [];
 let adminUniverses = [];
 let adminTags = [];
+let adminQecSessions = [];
 
 let editingCharacterId = null;
 let editingUniverseId = null;
@@ -801,6 +806,10 @@ function setupAdminResourceSelector() {
             document
                 .getElementById('tags-admin')
                 .hidden = resource !== 'tags';
+
+            document
+                .getElementById('qec-sessions-admin')
+                .hidden = resource !== 'qec-sessions';
         }
     );
 }
@@ -817,17 +826,20 @@ async function loadAdminData() {
         const [
             charactersResponse,
             universesResponse,
-            tagsResponse
+            tagsResponse,
+            sessionsResponse
         ] = await Promise.all([
             fetch(`${API_URL}/characters`),
             fetch(`${API_URL}/universes`),
-            fetch(`${API_URL}/tags`)
+            fetch(`${API_URL}/tags`),
+            fetch(`${API_URL}/qec/sessions`)
         ]);
 
         if (
             !charactersResponse.ok ||
             !universesResponse.ok ||
-            !tagsResponse.ok
+            !tagsResponse.ok ||
+            !sessionsResponse.ok
         ) {
             throw new Error(
                 'Impossible de récupérer les données.'
@@ -843,15 +855,23 @@ async function loadAdminData() {
         const tagsData =
             await tagsResponse.json();
 
+        const sessionsData =
+            await sessionsResponse.json();
+
         adminCharacters = charactersData.characters;
         adminUniverses = universesData.universes;
         adminTags = tagsData.tags;
+        adminQecSessions = sessionsData.sessions;
 
         populateAdminUniverses();
 
         renderAdminCharacters();
         renderAdminUniverses();
         renderAdminTags();
+        renderAdminQecSessions();
+
+        document.getElementById('delete-all-qec-sessions')
+            .onclick = deleteAllAdminQecSessions;
 
     } catch (error) {
         console.error(
@@ -2067,4 +2087,527 @@ async function loadCharacters() {
         empty.hidden = true;
         grid.innerHTML = '';
     }
+}
+
+
+let whoGameCharacters = [];
+let whoGameUniverses = [];
+let whoGameTags = [];
+let whoGameSessions = [];
+let whoGameEliminated = new Set();
+let whoGameRevealed = new Set();
+
+
+async function initializeWhoGamePage() {
+    try {
+        const [charactersResponse, universesResponse, tagsResponse] =
+            await Promise.all([
+                fetch(`${API_URL}/characters?limit=50`),
+                fetch(`${API_URL}/universes`),
+                fetch(`${API_URL}/tags`)
+            ]);
+
+        if (!charactersResponse.ok || !universesResponse.ok || !tagsResponse.ok) {
+            throw new Error('Impossible de charger les données du plateau.');
+        }
+
+        const charactersData = await charactersResponse.json();
+        const universesData = await universesResponse.json();
+        const tagsData = await tagsResponse.json();
+
+        whoGameCharacters = charactersData.characters || charactersData;
+        whoGameUniverses = universesData.universes || universesData;
+        whoGameTags = tagsData.tags || tagsData;
+
+        populateWhoGameSelect(
+            'quiz-universe-filter',
+            whoGameUniverses
+        );
+
+        populateWhoGameSelect(
+            'quiz-tag-filter',
+            whoGameTags
+        );
+
+
+            document.getElementById('quiz-refresh-sessions')
+                .addEventListener('click', loadWhoGameSessions);
+
+        document.getElementById('quiz-start')
+            .addEventListener('click', startWhoGame);
+
+        document.getElementById('quiz-universe-filter')
+            .addEventListener('change', updateWhoGameCharacterCount);
+
+        document.getElementById('quiz-tag-filter')
+            .addEventListener('change', updateWhoGameCharacterCount);
+
+        document.getElementById('quiz-show-eliminated')
+            .addEventListener('click', toggleWhoGameEliminated);
+
+        document.getElementById('quiz-back-to-sessions')
+            .addEventListener('click', showWhoGameSetup);
+
+        document.getElementById('quiz-session-search')
+            .addEventListener('input', renderWhoGameSessions);
+
+        updateWhoGameCharacterCount();
+        await loadWhoGameSessions();
+        restoreWhoGameCreatedCode();
+        await restoreWhoGameSession();
+    } catch (error) {
+        showWhoGameMessage(error.message, true);
+    }
+}
+
+
+function populateWhoGameSelect(selectId, values) {
+    const select = document.getElementById(selectId);
+
+    values.forEach((value) => {
+        const option = document.createElement('option');
+
+        option.value = value.id;
+        option.textContent = value.name;
+
+        select.appendChild(option);
+    });
+}
+
+
+function getWhoGameCandidates() {
+    const universeId = document.getElementById('quiz-universe-filter').value;
+    const tagId = document.getElementById('quiz-tag-filter').value;
+
+    return whoGameCharacters.filter((character) => {
+        const matchesUniverse = !universeId ||
+            String(character.universe_id) === String(universeId);
+
+        const tagIds = character.tag_ids
+            ? character.tag_ids.split('|')
+            : [];
+
+        const selectedTag = whoGameTags.find(
+            (tag) => String(tag.id) === String(tagId)
+        );
+
+        const matchesTag = !tagId ||
+            (character.tag_names || '').split('|').includes(selectedTag?.name);
+
+        return matchesUniverse && matchesTag;
+    });
+}
+
+
+function updateWhoGameCharacterCount() {
+    const candidates = getWhoGameCandidates();
+    const count = document.getElementById('quiz-character-count');
+
+    count.textContent = `${candidates.length} personnage${candidates.length > 1 ? 's' : ''}`;
+}
+
+
+function generateWhoGameCode() {
+    return `ANI${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+}
+
+
+async function loadWhoGameSessions() {
+    const list = document.getElementById('quiz-session-list');
+
+    list.innerHTML =
+        '<span class="loading-inline">Chargement des parties...</span>';
+
+    try {
+        const response = await fetch(`${API_URL}/qec/sessions`);
+
+        if (!response.ok) {
+            throw new Error('Impossible de charger les parties.');
+        }
+
+        const data = await response.json();
+        whoGameSessions = data.sessions || [];
+
+        renderWhoGameSessions();
+    } catch (error) {
+        const list = document.getElementById('quiz-session-list');
+
+        list.innerHTML =
+            `<p class="who-session-empty">${escapeHtml(error.message)}</p>`;
+    }
+}
+
+
+function renderWhoGameSessions() {
+    const list = document.getElementById('quiz-session-list');
+    const search = document.getElementById('quiz-session-search')
+        .value.trim().toLowerCase();
+    const sessions = whoGameSessions.filter((session) => {
+        const filters = [session.code, session.universe, session.tag]
+            .filter(Boolean)
+            .join(' ')
+            .toLowerCase();
+
+        return filters.includes(search);
+    });
+
+    list.innerHTML = '';
+
+    if (sessions.length === 0) {
+        list.innerHTML =
+            '<p class="who-session-empty">Aucune partie disponible.</p>';
+        return;
+    }
+
+    sessions.forEach((session) => {
+        const item = document.createElement('article');
+        const filters = [session.universe, session.tag]
+            .filter(Boolean)
+            .join(' / ') || 'Tous les personnages';
+
+        item.className = 'who-session-item';
+        item.innerHTML = `
+            <div>
+                <strong>${escapeHtml(session.code)}</strong>
+                <span>${escapeHtml(filters)}</span>
+                <small>${session.character_count} cartes</small>
+            </div>
+            <button type="button" class="btn btn-sm btn-primary">Rejoindre</button>
+        `;
+
+        item.querySelector('button').addEventListener(
+            'click',
+            () => joinWhoGame(session.code)
+        );
+
+        list.appendChild(item);
+    });
+}
+
+
+function createWhoGameSeed(code) {
+    let seed = 0;
+
+    for (let index = 0; index < code.length; index += 1) {
+        seed = (seed * 31 + code.charCodeAt(index)) >>> 0;
+    }
+
+    return seed || 1;
+}
+
+
+function shuffleWhoGameCharacters(characters, seed) {
+    const shuffled = [...characters];
+    let currentSeed = seed;
+
+    for (let index = shuffled.length - 1; index > 0; index -= 1) {
+        currentSeed = (currentSeed * 1664525 + 1013904223) >>> 0;
+        const swapIndex = currentSeed % (index + 1);
+        [shuffled[index], shuffled[swapIndex]] =
+            [shuffled[swapIndex], shuffled[index]];
+    }
+
+    return shuffled;
+}
+
+
+async function startWhoGame() {
+    const boardSize = Number(document.getElementById('quiz-board-size').value);
+    const candidates = getWhoGameCandidates();
+
+    if (candidates.length === 0) {
+        showWhoGameMessage('Aucun personnage ne correspond aux filtres.', true);
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/qec/sessions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                boardSize,
+                universeId: document.getElementById('quiz-universe-filter').value || null,
+                tagId: document.getElementById('quiz-tag-filter').value || null
+            })
+        });
+
+        if (!response.ok) {
+            const data = await response.json().catch(() => null);
+            throw new Error(data?.error || 'Impossible de créer la partie.');
+        }
+
+        const session = await response.json();
+        localStorage.removeItem('anibook-active-qec-session');
+        document.getElementById('who-board').hidden = true;
+        document.getElementById('who-step-one-grid').hidden = false;
+        showWhoGameCreatedCode(session.code);
+        await loadWhoGameSessions();
+    } catch (error) {
+        showWhoGameMessage(error.message, true);
+    }
+}
+
+
+async function joinWhoGame(code) {
+    try {
+        const response = await fetch(
+            `${API_URL}/qec/sessions/${encodeURIComponent(code)}`
+        );
+
+        if (!response.ok) {
+            const data = await response.json().catch(() => null);
+            throw new Error(data?.error || 'Partie introuvable.');
+        }
+
+        localStorage.removeItem('anibook-created-qec-code');
+        displayWhoGameSession(await response.json(), true);
+    } catch (error) {
+        showWhoGameMessage(error.message, true);
+    }
+}
+
+
+function displayWhoGameSession(session, isJoinedSession) {
+    whoGameEliminated = new Set();
+    whoGameRevealed = new Set();
+
+    localStorage.setItem(
+        'anibook-active-qec-session',
+        session.code
+    );
+
+    if (isJoinedSession) {
+        localStorage.removeItem('anibook-created-qec-code');
+        document.getElementById('quiz-created-code').hidden = true;
+    }
+
+    document.getElementById('quiz-active-code').textContent = `#${session.code}`;
+    document.getElementById('who-board').hidden = false;
+    document.getElementById('quiz-setup-message').hidden = true;
+
+    document.getElementById('who-step-one-grid').hidden = isJoinedSession;
+
+    renderWhoGameBoard(session.characters || []);
+}
+
+
+async function restoreWhoGameSession() {
+    const code = localStorage.getItem(
+        'anibook-active-qec-session'
+    );
+
+    if (!code) {
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            `${API_URL}/qec/sessions/${encodeURIComponent(code)}`
+        );
+
+        if (!response.ok) {
+            localStorage.removeItem('anibook-active-qec-session');
+            return;
+        }
+
+        displayWhoGameSession(
+            await response.json(),
+            true
+        );
+    } catch (error) {
+        console.error(
+            'Impossible de restaurer la partie QEC :',
+            error
+        );
+    }
+}
+
+
+function showWhoGameSetup() {
+    localStorage.removeItem('anibook-active-qec-session');
+    document.getElementById('who-step-one-grid').hidden = false;
+    document.getElementById('who-board').hidden = true;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+
+function renderWhoGameBoard(characters) {
+    const grid = document.getElementById('quiz-board-grid');
+
+    grid.innerHTML = '';
+
+    characters.forEach((character) => {
+        const card = document.createElement('button');
+        const isRevealed = whoGameRevealed.has(character.id);
+        const isEliminated = whoGameEliminated.has(character.id);
+
+        card.type = 'button';
+        card.className = `who-card${isRevealed ? ' is-revealed' : ''}${isEliminated ? ' is-eliminated' : ''}`;
+        card.setAttribute('aria-label', `Carte ${character.name}`);
+
+        const image = character.illustration || character.icon ||
+            'https://placehold.co/400x520?text=Anibook';
+
+        card.innerHTML = `
+            <span class="who-card-inner">
+                <span class="who-card-front">?</span>
+                <span class="who-card-back">
+                    <img src="${escapeHtml(image)}" alt="">
+                    <strong>${escapeHtml(character.name)}</strong>
+                    <small>${escapeHtml(character.universe || '')}</small>
+                </span>
+            </span>
+        `;
+
+        card.addEventListener('click', () => {
+            if (whoGameEliminated.has(character.id)) {
+                whoGameEliminated.delete(character.id);
+            } else if (whoGameRevealed.has(character.id)) {
+                whoGameEliminated.add(character.id);
+            } else {
+                whoGameRevealed.add(character.id);
+            }
+
+            renderWhoGameBoard(characters);
+            updateWhoGameStats(characters.length);
+        });
+
+        grid.appendChild(card);
+    });
+
+    updateWhoGameStats(characters.length);
+}
+
+
+function updateWhoGameStats(total) {
+    document.getElementById('quiz-visible-count').textContent =
+        `${total - whoGameEliminated.size} visibles`;
+    document.getElementById('quiz-hidden-count').textContent =
+        `${whoGameEliminated.size} éliminées`;
+}
+
+
+function toggleWhoGameEliminated() {
+    const button = document.getElementById('quiz-show-eliminated');
+    const board = document.getElementById('who-board-grid');
+
+    board.classList.toggle('show-eliminated');
+    button.textContent = board.classList.contains('show-eliminated')
+        ? 'Masquer les cartes éliminées'
+        : 'Afficher les cartes éliminées';
+}
+
+
+function showWhoGameMessage(message, isError = false) {
+    const element = document.getElementById('quiz-setup-message');
+
+    element.textContent = message;
+    element.classList.toggle('error', isError);
+    element.hidden = false;
+}
+
+
+function renderAdminQecSessions() {
+    const tbody = document.getElementById(
+        'qec-sessions-table-body'
+    );
+
+    tbody.innerHTML = '';
+
+    adminQecSessions.forEach((session) => {
+        const row = document.createElement('tr');
+        const filters = [session.universe, session.tag]
+            .filter(Boolean)
+            .join(' / ') || 'Tous les personnages';
+
+        row.innerHTML = `
+            <td><strong>${escapeHtml(session.code)}</strong></td>
+            <td>${escapeHtml(filters)}</td>
+            <td>${session.character_count}</td>
+            <td>${escapeHtml(new Date(session.created_at).toLocaleString('fr-FR'))}</td>
+            <td>
+                <button
+                    type="button"
+                    class="btn btn-sm btn-danger"
+                    data-delete-qec-session="${session.id}"
+                >
+                    Supprimer
+                </button>
+            </td>
+        `;
+
+        row.querySelector('[data-delete-qec-session]')
+            .addEventListener(
+                'click',
+                () => deleteAdminQecSession(session.id, session.code)
+            );
+
+        tbody.appendChild(row);
+    });
+}
+
+
+async function deleteAdminQecSession(id, code) {
+    if (!confirm(`Supprimer la partie QEC "${code}" ?`)) {
+        return;
+    }
+
+    const response = await fetch(
+        `${API_URL}/qec/sessions/${id}`,
+        { method: 'DELETE' }
+    );
+
+    if (!response.ok) {
+        throw new Error('Impossible de supprimer la partie QEC.');
+    }
+
+    await loadAdminData();
+    showAdminMessage('Partie QEC supprimée avec succès.');
+}
+
+
+function showWhoGameCreatedCode(code) {
+    localStorage.setItem(
+        'anibook-created-qec-code',
+        code
+    );
+
+    document.getElementById('quiz-created-code-value')
+        .textContent = code;
+    document.getElementById('quiz-created-code').hidden = false;
+}
+
+
+function restoreWhoGameCreatedCode() {
+    const code = localStorage.getItem(
+        'anibook-created-qec-code'
+    );
+
+    if (code) {
+        showWhoGameCreatedCode(code);
+    }
+}
+
+
+async function deleteAllAdminQecSessions() {
+    if (adminQecSessions.length === 0) {
+        showAdminMessage('Aucune session QEC à supprimer.');
+        return;
+    }
+
+    if (!confirm('Supprimer toutes les sessions QEC ?')) {
+        return;
+    }
+
+    const response = await fetch(
+        `${API_URL}/qec/sessions/all`,
+        { method: 'DELETE' }
+    );
+
+    if (!response.ok) {
+        throw new Error('Impossible de supprimer les sessions QEC.');
+    }
+
+    await loadAdminData();
+    showAdminMessage('Toutes les sessions QEC ont été supprimées.');
 }

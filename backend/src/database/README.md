@@ -28,6 +28,7 @@ Les fichiers sont exécutés dans l’ordre alphabétique et enregistrés dans l
 | --- | --- |
 | `001_initial_schema.sql` | Crée les tables de base. |
 | `002_repair_character_schema.sql` | Garantit la présence des tables tags, personnages et associations pour les bases initialisées avec une ancienne version du runner. |
+| `003_qec_sessions.sql` | Crée les sessions QEC et la liste figée de personnages de chaque partie. |
 
 Le runner utilise `CREATE TABLE IF NOT EXISTS`, ce qui permet de relancer le serveur sans recréer les tables existantes.
 
@@ -82,3 +83,7 @@ npm --prefix .\backend start
 ```
 
 Le backend recréera une base propre et exécutera toutes les migrations disponibles.
+
+## Sessions QEC
+
+`qec_sessions` conserve le code, les filtres, la taille, le seed et la date de création d’une partie. `qec_session_characters` conserve les personnages sélectionnés et leur position dans le plateau. La suppression d’une session supprime automatiquement ses lignes associées grâce à `ON DELETE CASCADE`.

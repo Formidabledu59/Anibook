@@ -154,6 +154,30 @@ La route `GET /api/characters/random` renvoie un personnage choisi aléatoiremen
 
 Les associations sont uniques grâce à la clé primaire composée `character_id + tag_id`.
 
+## API des parties QEC
+
+Une partie **Qui est-ce ?** est persistée en base. Son code identifie une session et ses cartes sont enregistrées une seule fois : deux appareils qui rejoignent le même code reçoivent donc exactement le même plateau.
+
+| Méthode | Route | Résultat |
+| --- | --- | --- |
+| `POST` | `/api/qec/sessions` | Crée une partie et fige ses personnages. Réponse `201`. |
+| `GET` | `/api/qec/sessions/:code` | Rejoint une partie existante et retourne son plateau. |
+| `GET` | `/api/qec/sessions` | Liste les parties pour l’administration. |
+| `DELETE` | `/api/qec/sessions/:id` | Supprime une partie et ses cartes associées. |
+
+Création :
+
+```json
+{
+  "code": "ANIBOOK7",
+  "universeId": 1,
+  "tagId": null,
+  "boardSize": 24
+}
+```
+
+Le code est facultatif à la création. `boardSize` est limité à 50. Si un code existe déjà, l’API renvoie `409` : il faut rejoindre cette partie ou choisir un autre code.
+
 ## Organisation du code
 
 ```text
@@ -167,6 +191,7 @@ backend/src/
 ├── universes/                      # Controller, service, repository, DTO, routes
 ├── tags/                           # Controller, service, repository, DTO, routes
 ├── character-tags/                 # Gestion des associations
+├── qec-sessions/                   # Parties Qui est-ce ? persistées
 └── middlewares/                    # 404 et erreurs HTTP
 ```
 

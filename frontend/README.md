@@ -9,7 +9,7 @@ Le frontend d’Anibook est une interface statique en HTML5, CSS3 et JavaScript 
 | `index.html` | Accueil, statistiques et état de l’API. |
 | `characters.html` | Catalogue des personnages avec recherche et filtre par univers. |
 | `random.html` | Affichage d’un personnage choisi aléatoirement. |
-| `quiz.html` | Quiz interactif à partir des données disponibles. |
+| `qce.html` | Jeu QEC (Qui est-ce ?) avec parties et plateau. |
 | `admin.html` | Création, modification et suppression des personnages, univers et tags. |
 
 ## Lancer le frontend
@@ -70,7 +70,7 @@ frontend/
 ├── admin.html       # Gestion des données
 ```powershell
 ├── index.html       # Accueil
-├── quiz.html        # Quiz
+├── qce.html        # Jeu QEC
 ├── random.html      # Personnage aléatoire
 ├── css/
 │   └── style.css    # Variables, layout et composants visuels
