@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Anibook - Fiche personnage</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<nav class="navbar">
+    <div class="navbar-container">
+        <a href="index.html" class="logo">
+            <span class="logo-icon">A</span>
+            <span class="logo-text">Anibook</span>
+        </a>
+
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">Accueil</a>
+            <a href="characters.html" class="nav-link active">Personnages</a>
+            <a href="random.html" class="nav-link">Random</a>
+            <a href="quiz.html" class="nav-link">Quiz</a>
+            <a href="admin.html" class="nav-link">Admin</a>
+        </div>
+
+        <button class="nav-toggle" type="button">☰</button>
+    </div>
+</nav>
+
+<main id="character-detail">
+    <section class="page-header">
+        <div class="container">
+            <a href="characters.html" class="detail-back-link">Retour aux personnages</a>
+            <h1>Fiche <span class="gradient-text">personnage</span></h1>
+        </div>
+    </section>
+
+    <section class="character-detail-container container">
+        <div id="character-detail-loading" class="loading">
+            <span class="spinner" aria-hidden="true"></span>
+            <span>Chargement de la fiche...</span>
+        </div>
+
+        <div id="character-detail-error" class="alert" hidden>
+            Impossible de charger ce personnage.
+        </div>
+
+        <article id="character-detail-content" class="character-detail-card" hidden>
+            <div class="character-detail-image">
+                <img id="character-detail-image" src="" alt="">
+            </div>
+
+            <div class="character-detail-info">
+                <span id="character-detail-universe" class="tag orange"></span>
+                <h2 id="character-detail-name"></h2>
+                <p id="character-detail-description"></p>
+                <div id="character-detail-tags" class="tags"></div>
+            </div>
+        </article>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="footer-container">
+        <p>© 2026 Anibook</p>
+    </div>
+</footer>
+
+<script src="js/main.js"></script>
+
+</body>
+</html>

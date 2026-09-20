@@ -14,6 +14,18 @@ function findAll(filters, callback) {
         parameters.push(filters.universeId);
     }
 
+    if (filters.tagId) {
+        conditions.push(`
+            EXISTS (
+                SELECT 1
+                FROM character_tags filter_ct
+                WHERE filter_ct.character_id = c.id
+                AND filter_ct.tag_id = ?
+            )
+        `);
+        parameters.push(filters.tagId);
+    }
+
     const whereClause = conditions.length > 0
         ? `WHERE ${conditions.join(' AND ')}`
         : '';
@@ -26,7 +38,14 @@ function findAll(filters, callback) {
             c.illustration,
             c.description,
             u.id AS universe_id,
-            u.name AS universe
+            u.name AS universe,
+            (
+                SELECT GROUP_CONCAT(t.name, '|')
+                FROM character_tags ct
+                INNER JOIN tags t
+                    ON t.id = ct.tag_id
+                WHERE ct.character_id = c.id
+            ) AS tag_names
         FROM characters c
         INNER JOIN universes u
             ON u.id = c.universe_id

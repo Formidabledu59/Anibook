@@ -13,6 +13,7 @@ function parseId(value) {
 function parseListFilters(query) {
     const requestedLimit = Number(query.limit);
     const requestedUniverseId = Number(query.universeId);
+    const requestedTagId = Number(query.tagId);
 
     return {
         search: typeof query.search === 'string'
@@ -21,6 +22,10 @@ function parseListFilters(query) {
         universeId: Number.isInteger(requestedUniverseId) &&
             requestedUniverseId > 0
             ? requestedUniverseId
+            : null,
+        tagId: Number.isInteger(requestedTagId) &&
+            requestedTagId > 0
+            ? requestedTagId
             : null,
         limit: Number.isInteger(requestedLimit) &&
             requestedLimit > 0 &&

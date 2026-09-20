@@ -20,6 +20,10 @@ document.addEventListener('DOMContentLoaded', () => {
         initializeRandomPage();
     }
 
+    if (document.getElementById('character-detail')) {
+        initializeCharacterDetailPage();
+    }
+
     if (document.getElementById('character-form')) {
         initializeAdminPage();
     }
@@ -125,9 +129,11 @@ async function loadHomeStatistics() {
 
 let characters = [];
 let universes = [];
+let characterTags = [];
 
 let currentSearch = '';
 let currentUniverse = '';
+let currentTag = '';
 let characterSearchTimer = null;
 let characterRequestController = null;
 
@@ -137,8 +143,13 @@ async function initializeCharactersPage() {
         document.getElementById('characters-loading');
 
     try {
-        const universesResponse =
-            await fetch(`${API_URL}/universes`);
+        const [
+            universesResponse,
+            tagsResponse
+        ] = await Promise.all([
+            fetch(`${API_URL}/universes`),
+            fetch(`${API_URL}/tags`)
+        ]);
 
         if (!universesResponse.ok) {
             throw new Error(
@@ -146,14 +157,28 @@ async function initializeCharactersPage() {
             );
         }
 
+        if (!tagsResponse.ok) {
+            throw new Error(
+                'Impossible de récupérer les tags.'
+            );
+        }
+
         const universesData =
             await universesResponse.json();
+
+        const tagsData =
+            await tagsResponse.json();
 
         universes = Array.isArray(universesData)
             ? universesData
             : universesData.universes || [];
 
+        characterTags = Array.isArray(tagsData)
+            ? tagsData
+            : tagsData.tags || [];
+
         populateUniverseFilter();
+        populateTagFilter();
 
         setupCharacterFilters();
 
@@ -203,6 +228,21 @@ function populateUniverseFilter() {
 }
 
 
+function populateTagFilter() {
+    const select =
+        document.getElementById('tag-filter');
+
+    characterTags.forEach((tag) => {
+        const option = document.createElement('option');
+
+        option.value = tag.id;
+        option.textContent = tag.name;
+
+        select.appendChild(option);
+    });
+}
+
+
 /*
  * ============================================================
  * FILTRES
@@ -215,6 +255,9 @@ function setupCharacterFilters() {
 
     const universeFilter =
         document.getElementById('universe-filter');
+
+    const tagFilter =
+        document.getElementById('tag-filter');
 
     const resetButton =
         document.getElementById('filter-reset');
@@ -246,14 +289,25 @@ function setupCharacterFilters() {
         }
     );
 
+    tagFilter.addEventListener(
+        'change',
+        (event) => {
+            currentTag = event.target.value;
+
+            loadCharacters();
+        }
+    );
+
     resetButton.addEventListener(
         'click',
         () => {
             currentSearch = '';
             currentUniverse = '';
+            currentTag = '';
 
             searchInput.value = '';
             universeFilter.value = '';
+            tagFilter.value = '';
 
             loadCharacters();
         }
@@ -321,6 +375,30 @@ function createCharacterCard(character) {
 
     article.className =
         'character-card';
+
+    article.tabIndex = 0;
+    article.setAttribute(
+        'aria-label',
+        `Voir la fiche de ${character.name}`
+    );
+
+    article.addEventListener(
+        'click',
+        () => {
+            window.location.href =
+                `character.html?id=${character.id}`;
+        }
+    );
+
+    article.addEventListener(
+        'keydown',
+        (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                article.click();
+            }
+        }
+    );
 
     const imageContainer =
         document.createElement('div');
@@ -394,6 +472,19 @@ function createCharacterCard(character) {
             universeTag
         );
     }
+
+    const tagNames = character.tag_names
+        ? character.tag_names.split('|')
+        : [];
+
+    tagNames.forEach((tagName) => {
+        const tagElement = document.createElement('span');
+
+        tagElement.className = 'tag blue';
+        tagElement.textContent = tagName;
+
+        tagsContainer.appendChild(tagElement);
+    });
 
     info.appendChild(name);
     info.appendChild(description);
@@ -565,7 +656,94 @@ function displayRandomCharacter(character) {
     }
 
     details.href =
-        `characters.html?id=${character.id}`;
+        `character.html?id=${character.id}`;
+}
+
+
+async function initializeCharacterDetailPage() {
+    const loading =
+        document.getElementById('character-detail-loading');
+
+    const error =
+        document.getElementById('character-detail-error');
+
+    const content =
+        document.getElementById('character-detail-content');
+
+    const characterId =
+        new URLSearchParams(window.location.search).get('id');
+
+    if (!characterId || !/^\d+$/.test(characterId)) {
+        loading.hidden = true;
+        error.textContent =
+            'Personnage introuvable.';
+        error.hidden = false;
+        return;
+    }
+
+    try {
+        const [characterResponse, tagsResponse] =
+            await Promise.all([
+                fetch(`${API_URL}/characters/${characterId}`),
+                fetch(`${API_URL}/characters/${characterId}/tags`)
+            ]);
+
+        if (!characterResponse.ok || !tagsResponse.ok) {
+            throw new Error(
+                'Impossible de charger ce personnage.'
+            );
+        }
+
+        const character = await characterResponse.json();
+        const tagsData = await tagsResponse.json();
+        const tags = tagsData.tags || [];
+
+        document.getElementById('character-detail-image').src =
+            character.illustration ||
+            character.icon ||
+            'https://placehold.co/700x900?text=Anibook';
+
+        document.getElementById('character-detail-image').alt =
+            character.name;
+
+        document.getElementById('character-detail-name')
+            .textContent = character.name;
+
+        document.getElementById('character-detail-description')
+            .textContent = character.description ||
+                'Aucune description disponible.';
+
+        document.getElementById('character-detail-universe')
+            .textContent = character.universe ||
+                'Univers inconnu';
+
+        const tagsContainer =
+            document.getElementById('character-detail-tags');
+
+        tagsContainer.innerHTML = '';
+
+        tags.forEach((tag) => {
+            const tagElement = document.createElement('span');
+
+            tagElement.className = 'tag blue';
+            tagElement.textContent = tag.name;
+            tagsContainer.appendChild(tagElement);
+        });
+
+        loading.hidden = true;
+        error.hidden = true;
+        content.hidden = false;
+    } catch (requestError) {
+        console.error(
+            'Erreur lors du chargement du personnage :',
+            requestError
+        );
+
+        loading.hidden = true;
+        content.hidden = true;
+        error.textContent = requestError.message;
+        error.hidden = false;
+    }
 }
 
 /*
@@ -1840,6 +2018,10 @@ async function loadCharacters() {
 
     if (currentUniverse) {
         query.set('universeId', currentUniverse);
+    }
+
+    if (currentTag) {
+        query.set('tagId', currentTag);
     }
 
     loading.textContent =
